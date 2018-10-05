@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<!--<link rel="stylesheet" type="text/css" href="/css/main.css">-->
+		<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>	
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<!-- Bootstrap library -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<!-- Our custom CSS -->
+		<style>
+			.ads{
+			  text-align: center;
+			  margin: .4vw 0;
+			  background: #F4CC70;
+			  padding: .4vw;
+			}
+			body {
+				background-color: green;
+			}
+			.content{
+			  margin: .4vw 0;
+			  background: lightblue;
+			  padding: .4vw;
+			}
+			.tic-panel{
+			  border: solid 2px black;
+			  margin: .4vw 0;
+			  background: #66A5AD;
+			  padding: .4vw;
+			}
+			.tic-box{
+			  border: solid black 1px;
+			  font-size: 5vw;
+			  background: #6AB187;
+			  text-align: center;
+			  color: lavender;
+  			  width: 85px;
+ 			  height: 85px;
+			}	
+			.tic-box:hover{
+			  background: #20948B;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+			  <div class="col-12 col-sm-2 ads"> "ads </div>
+			  <div class="col-12 col-sm-6 content">
+				<div class="container-fluid tic-container">
+				  <div class="row tic-row">
+					<div id="one" class="col-4 tic-box"> 1 </div>
+					<div id="two" class="col-4 tic-box"> 2 </div>
+					<div id="three" class="col-4 tic-box"> 3 </div>
+				  </div>
+				  <div class="row tic-row">
+					<div id="four" class="col-4 tic-box"> 4 </div>
+					<div id="five" class="col-4 tic-box"> 5 </div>
+					<div id="six" class="col-4 tic-box"> 6 </div>
+				  </div>
+				  <div class="row tic-row">
+					<div id="seven" class="col-4 tic-box"> 7 </div>
+					<div id="eight" class="col-4 tic-box"> 8 </div>
+					<div id="nine" class="col-4 tic-box"> 9 </div>
+				  </div>
+				</div>
+			  </div>
+			  <div class="col-12 col-sm-2 tic-panel"> TRUMP SAYS:<br>Quote:<br>Foo bar: stuff<br> Reset game and all that blah </div>
+			  <div class="col-12 col-sm-2 ads"> ads </div>
+			</div>
+		</div>
+	</body>
+	<script>
+		var marker = 'X';
+		var oneMarked = 'false';
+		var twoMarked = 'false';
+		var threeMarked = 'false';
+		var fourMarked = 'false';
+		var fiveMarked = 'false';
+		var sixMarked = 'false';
+		var sevenMarked = 'false';
+		var eightMarked = 'false';
+		var nineMarked = 'false';
+		var getTrumpQuote = function(success) {
+			$.ajax({
+				url: "https://cat-fact.herokuapp.com/facts",
+				type: "GET",
+				dataType: 'json',
+				headers: {
+					Accept: "application/hal+jsonj"
+				},
+				success: function() { console.log('success');
+				},	
+				error: function(err, e) { console.log('There was an error ' + JSON.stringify(err) + " " + JSON.stringify(e)); },
+			});
+		}
+		$(document).ready(function() {
+			$('#textField').keyup(function() {
+
+			});
+			$('#one').click(function(e){
+				$('#one').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getTrumpQuote(function() {
+					console.log("Callback ran!");
+				});
+			})
+			$('#button').click(function(e) {
+				var value = $('#textField').val();
+				console.log(value);
+				e.preventDefault();
+				$('#holder').text(value);
+				$.ajax({
+					url: 'http://api.openweathermap.org/data/2.5/weather?q=' + value + '&appid=ed5639ff45aab577ca97778a71a15373',
+					dataType: 'json',
+					success: function(data) {
+						console.log(data)
+						var location = data['name'];
+						var humidity = data['main']['humidity'];
+						var temp_min = data['main']['temp_min'];
+						var temp_max = data['main']['temp_max'];
+						var everything = "<ul>";
+						everything += "<li>Location: " + location;
+ 						everything += "<li>Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
+						everything += "<li>Humidity: " + humidity + "%";
+						everything += "</ul>";
+						$('#weather').html(everything);
+					}
+				});
+
+			});
+			$('#stackExchangeButton').click(function(e) {
+				e.preventDefault();	
+				var searchValue = $('#stackExchangeTextField').val();
+				$.ajax({
+					url: 'https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=' + searchValue + '&site=stackoverflow',
+					dataType: 'json',
+					success: function(data) {
+						console.log(data);
+						var html = '<p> The first 5 questoins from Stack Overflow about ' +  searchValue + ' are... </p>';
+						var items = data['items'];
+						html += '<ol>';
+						html += '<li>' + items[0].title + '</li>' 
+						html += '<li>' + items[1].title + '</li>' 
+						html += '<li>' + items[2].title + '</li>' 
+						html += '<li>' + items[3].title + '</li>' 
+						html += '<li>' + items[4].title + '</li>' 
+						html += '</ol>'
+						$('#stackExchange').html(html);
+					}	
+				});
+				
+			});
+
+
+			/*
+			var inner = "<ul>";
+			console.log("part = "+part);
+			for(i = 0; i < cities.length; i++) {
+				if(cities[i].startsWith(part)) {
+					inner += "<li>"+cities[i]+"</li>";
+				}
+			}
+			inner+="</ul>";
+			suggestions.innerHTML = inner;
+			*/
+		});
+	</script>
+
+</html>
