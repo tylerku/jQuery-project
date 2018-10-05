@@ -15,7 +15,7 @@
 			.ads{
 			  text-align: center;
 			  margin: .4vw 0;
-			  background: #F4CC70;
+			  background: green;
 			  padding: .4vw;
 			}
 			body {
@@ -27,9 +27,9 @@
 			  padding: .4vw;
 			}
 			.tic-panel{
-			  border: solid 2px black;
+			  border: solid 2px white;
 			  margin: .4vw 0;
-			  background: #66A5AD;
+			  background: green;
 			  padding: .4vw;
 			}
 			.tic-box{
@@ -44,34 +44,55 @@
 			.tic-box:hover{
 			  background: #20948B;
 			}
+			.center {
+				text-align: center;
+			}
+			.resetButtonContainer {
+				margin-top: 3em;
+			}
+			h1 {
+				color: white;
+			}
+			p {
+				color: white;
+			}
 		</style>
 	</head>
 	<body>
+		<div class="center">
+			<h1> Challenge Tic Tac Toe </h1>
+			<p>
+				Play with a friend and solve javascript challenges before going again.
+			</p>
+		</div>
 		<div class="container-fluid">
 			<div class="row">
-			  <div class="col-12 col-sm-2 ads"> "ads </div>
+			  <div class="col-12 col-sm-2 ads"></div>
 			  <div class="col-12 col-sm-6 content">
 				<div class="container-fluid tic-container">
 				  <div class="row tic-row">
-					<div id="one" class="col-4 tic-box"> 1 </div>
-					<div id="two" class="col-4 tic-box"> 2 </div>
-					<div id="three" class="col-4 tic-box"> 3 </div>
+					<div id="one" class="col-4 tic-box"> - </div>
+					<div id="two" class="col-4 tic-box"> - </div>
+					<div id="three" class="col-4 tic-box"> - </div>
 				  </div>
 				  <div class="row tic-row">
-					<div id="four" class="col-4 tic-box"> 4 </div>
-					<div id="five" class="col-4 tic-box"> 5 </div>
-					<div id="six" class="col-4 tic-box"> 6 </div>
+					<div id="four" class="col-4 tic-box"> - </div>
+					<div id="five" class="col-4 tic-box"> - </div>
+					<div id="six" class="col-4 tic-box"> - </div>
 				  </div>
 				  <div class="row tic-row">
-					<div id="seven" class="col-4 tic-box"> 7 </div>
-					<div id="eight" class="col-4 tic-box"> 8 </div>
-					<div id="nine" class="col-4 tic-box"> 9 </div>
+					<div id="seven" class="col-4 tic-box"> - </div>
+					<div id="eight" class="col-4 tic-box"> - </div>
+					<div id="nine" class="col-4 tic-box"> - </div>
 				  </div>
 				</div>
 			  </div>
-			  <div class="col-12 col-sm-2 tic-panel"> TRUMP SAYS:<br>Quote:<br>Foo bar: stuff<br> Reset game and all that blah </div>
-			  <div class="col-12 col-sm-2 ads"> ads </div>
+			  <div id="challenge" class="col-12 col-sm-2 tic-panel"> <p>Challenge:</p> </div>
+			 <!-- <div class="col-12 col-sm-2 ads"></div>-->
 			</div>
+		</div>
+		<div class="center resetButtonContainer">
+			<button type="button" onClick="resetGame()" class="btn btn-outline-dark btn-lg">Reset Game</button>
 		</div>
 	</body>
 	<script>
@@ -85,89 +106,157 @@
 		var sevenMarked = 'false';
 		var eightMarked = 'false';
 		var nineMarked = 'false';
-		var getTrumpQuote = function(success) {
-			$.ajax({
-				url: "https://cat-fact.herokuapp.com/facts",
-				type: "GET",
-				dataType: 'json',
-				headers: {
-					Accept: "application/hal+jsonj"
-				},
-				success: function() { console.log('success');
-				},	
-				error: function(err, e) { console.log('There was an error ' + JSON.stringify(err) + " " + JSON.stringify(e)); },
-			});
+		var resetGame = function() {
+			marker = 'X';
+			$('#challenge').html('<p>Challenge:</p>');
+			$('#one').html('-');
+			$('#two').html('-');
+			$('#three').html('-');
+			$('#four').html('-');
+			$('#five').html('-');
+			$('#six').html('-');
+			$('#seven').html('-');
+			$('#eight').html('-');
+			$('#nine').html('-');
 		}
 		$(document).ready(function() {
-			$('#textField').keyup(function() {
-
-			});
-			$('#one').click(function(e){
-				$('#one').html(marker);
-				marker = marker == 'X' ? 'O' : 'X';
-				getTrumpQuote(function() {
-					console.log("Callback ran!");
-				});
-			})
-			$('#button').click(function(e) {
-				var value = $('#textField').val();
-				console.log(value);
-				e.preventDefault();
-				$('#holder').text(value);
+			var getChallenge = function(finished) {
 				$.ajax({
-					url: 'http://api.openweathermap.org/data/2.5/weather?q=' + value + '&appid=ed5639ff45aab577ca97778a71a15373',
+					url: 'https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=javascript&site=stackoverflow',
 					dataType: 'json',
-					success: function(data) {
-						console.log(data)
-						var location = data['name'];
-						var humidity = data['main']['humidity'];
-						var temp_min = data['main']['temp_min'];
-						var temp_max = data['main']['temp_max'];
-						var everything = "<ul>";
-						everything += "<li>Location: " + location;
- 						everything += "<li>Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
-						everything += "<li>Humidity: " + humidity + "%";
-						everything += "</ul>";
-						$('#weather').html(everything);
-					}
-				});
-
-			});
-			$('#stackExchangeButton').click(function(e) {
-				e.preventDefault();	
-				var searchValue = $('#stackExchangeTextField').val();
-				$.ajax({
-					url: 'https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=' + searchValue + '&site=stackoverflow',
-					dataType: 'json',
-					success: function(data) {
-						console.log(data);
-						var html = '<p> The first 5 questoins from Stack Overflow about ' +  searchValue + ' are... </p>';
-						var items = data['items'];
-						html += '<ol>';
-						html += '<li>' + items[0].title + '</li>' 
-						html += '<li>' + items[1].title + '</li>' 
-						html += '<li>' + items[2].title + '</li>' 
-						html += '<li>' + items[3].title + '</li>' 
-						html += '<li>' + items[4].title + '</li>' 
-						html += '</ol>'
-						$('#stackExchange').html(html);
+					success: function(res) {
+						finished(res);	
 					}	
 				});
-				
-			});
-
-
-			/*
-			var inner = "<ul>";
-			console.log("part = "+part);
-			for(i = 0; i < cities.length; i++) {
-				if(cities[i].startsWith(part)) {
-					inner += "<li>"+cities[i]+"</li>";
+			} 
+			var html_pretext = '<p> Before your next turn, answer this javascript question... </p>';
+			$('#one').click(function(e){
+				var text = $('#one').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
 				}
-			}
-			inner+="</ul>";
-			suggestions.innerHTML = inner;
-			*/
+				$('#one').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[0].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#two').click(function(e){
+				var text = $('#two').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#two').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[1].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#three').click(function(e){
+				var text = $('#three').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#three').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[2].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#four').click(function(e){
+				var text = $('#four').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#four').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[3].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#five').click(function(e){
+				var text = $('#five').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#five').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[10].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#six').click(function(e){
+				var text = $('#six').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#six').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[5].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#seven').click(function(e){
+				var text = $('#seven').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#seven').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[6].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#eight').click(function(e){
+				var text = $('#eight').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#eight').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[7].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			$('#nine').click(function(e){
+				var text = $('#nine').text();
+				if (text == 'X' || text == 'O') {
+					alert('Already went in that spot');
+					return;
+				}
+				$('#nine').html(marker);
+				marker = marker == 'X' ? 'O' : 'X';
+				getChallenge(function(res) {
+					var html = html_pretext;
+					html += '<p>' + res.items[8].title + '</p>';
+					$('#challenge').html(html);
+				});
+			})
+			
 		});
 	</script>
 
